@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
+import os
 
 app = Flask(__name__)
 app.secret_key = "secretkey"
@@ -26,6 +27,10 @@ class Task(db.Model):
     completed = db.Column(db.Boolean, default=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
+# Create tables when app starts
+with app.app_context():
+    db.create_all()
+
 # --------------------
 # ROUTES
 # --------------------
@@ -34,7 +39,6 @@ class Task(db.Model):
 def home():
     return render_template("index.html")
 
-# REGISTER
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -50,7 +54,6 @@ def register():
 
     return render_template("register.html")
 
-# LOGIN
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -65,7 +68,6 @@ def login():
 
     return render_template("login.html")
 
-# DASHBOARD
 @app.route("/dashboard")
 def dashboard():
     if "user_id" not in session:
@@ -74,7 +76,6 @@ def dashboard():
     tasks = Task.query.filter_by(user_id=session["user_id"]).all()
     return render_template("dashboard.html", tasks=tasks)
 
-# ADD TASK
 @app.route("/add-task", methods=["POST"])
 def add_task():
     title = request.form["title"]
@@ -85,7 +86,6 @@ def add_task():
 
     return redirect(url_for("dashboard"))
 
-# COMPLETE TASK
 @app.route("/complete-task/<int:id>")
 def complete_task(id):
     task = Task.query.get(id)
@@ -93,7 +93,6 @@ def complete_task(id):
     db.session.commit()
     return redirect(url_for("dashboard"))
 
-# DELETE TASK
 @app.route("/delete-task/<int:id>")
 def delete_task(id):
     task = Task.query.get(id)
@@ -101,17 +100,10 @@ def delete_task(id):
     db.session.commit()
     return redirect(url_for("dashboard"))
 
-# LOGOUT
 @app.route("/logout")
 def logout():
     session.pop("user_id", None)
     return redirect(url_for("login"))
 
-# --------------------
-import os
-
 if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()
-
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
