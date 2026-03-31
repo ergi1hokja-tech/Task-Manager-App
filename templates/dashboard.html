@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <nav class="topbar">
+        <div class="topbar-left">
+            <div class="logo-box">✓</div>
+            <span class="brand">Task Manager</span>
+        </div>
+
+        <div class="topbar-center">
+            <a href="/dashboard" class="nav-link active">Dashboard</a>
+            <a href="/logout" class="nav-link">Logout</a>
+        </div>
+
+        <div class="topbar-right">
+            <span class="welcome-text">Welcome{% if session.get('user_id') %}{% endif %}</span>
+            <div class="avatar">👤</div>
+        </div>
+    </nav>
+
+    <main class="page-wrap">
+        <div class="dashboard-card">
+            <h2>Your Tasks</h2>
+
+            <form action="/add-task" method="POST" class="task-form">
+                <input type="text" name="title" placeholder="Enter a task" required>
+                <button type="submit" class="add-btn">Add <span>＋</span></button>
+            </form>
+
+            <ul class="task-list">
+                {% for task in tasks %}
+                <li class="task-row">
+                    <div class="task-left">
+                        {% if task.completed %}
+                            <span class="task-check filled">✓</span>
+                        {% else %}
+                            <span class="task-check empty"></span>
+                        {% endif %}
+
+                        <span class="task-title {% if task.completed %}done{% endif %}">
+                            {{ task.title }}
+                        </span>
+                    </div>
+
+                    <div class="task-right">
+                        {% if task.completed %}
+                            <span class="status-badge completed-badge">Completed</span>
+                        {% else %}
+                            <a href="/complete-task/{{ task.id }}" class="status-badge complete-action">✓ Complete</a>
+                        {% endif %}
+
+                        <a href="/delete-task/{{ task.id }}" class="delete-btn">🗑</a>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+
+            <div class="logout-bottom">
+                <a href="/logout">Logout</a>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

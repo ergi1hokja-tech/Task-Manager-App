@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="container home-card">
+        <h1>Welcome to Task Manager</h1>
+        <p>Your simple Flask task management app.</p>
+
+        <div class="home-buttons">
+            <a href="/register" class="btn-link">Register</a>
+            <a href="/login" class="btn-link secondary">Login</a>
+        </div>
+    </div>
+
+</body>
+</html>
